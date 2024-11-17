@@ -38,6 +38,15 @@ const CartItem = ({ onContinueShopping }) => {
         dispatch(removeItem({ id: item.id }));
     };
 
+    const handleAddToCartFromCart = (item) => {
+        dispatch(addItem({ 
+            id: item.id, 
+            name: item.name, 
+            image: item.image, 
+            cost: item.cost 
+        }));
+    };
+    
     const handleCheckoutShopping = () => {
         alert('Functionality to be added for future reference');
     };
