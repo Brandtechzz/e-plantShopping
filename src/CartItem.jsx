@@ -1,40 +1,44 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { removeItem, updateQuantity } from './CartSlice';
 
 const CartItem = ({ onContinueShopping }) => {
     const dispatch = useDispatch();
-    const cartItems = useSelector(state => state.cart.items); // Get cart items from the Redux store
+    const cartItems = useSelector(state => state.cart.items);
+    const [totalQuantity, setTotalQuantity] = useState(0);
 
-    // Calculate the total amount for all items in the cart
+    useEffect(() => {
+        const totalCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+        setTotalQuantity(totalCount);
+    }, [cartItems]);
+
     const calculateTotalAmount = () => {
         return cartItems.reduce((total, item) => {
-            return total + (item.cost.slice(1) * item.quantity); // Assuming cost is a string, e.g., "$15"
-        }, 0).toFixed(2); // Return total value fixed to 2 decimal places
+            return total + (parseFloat(item.cost.replace(/[^0-9.-]+/g, "")) * item.quantity);
+        }, 0).toFixed(2);
     };
 
-    // Calculate the total cost of a specific item
     const calculateItemTotalCost = (item) => {
-        return (item.cost.slice(1) * item.quantity).toFixed(2);
+        return (parseFloat(item.cost.replace(/[^0-9.-]+/g, "")) * item.quantity).toFixed(2);
     };
 
     const handleIncrement = (item) => {
-        dispatch(updateQuantity({ name: item.name, quantity: item.quantity + 1 })); // Increment quantity
+        dispatch(updateQuantity({ id: item.id, quantity: item.quantity + 1 }));
     };
 
     const handleDecrement = (item) => {
         if (item.quantity > 1) {
-            dispatch(updateQuantity({ name: item.name, quantity: item.quantity - 1 })); // Decrement quantity
+            dispatch(updateQuantity({ id: item.id, quantity: item.quantity - 1 }));
         } else {
-            dispatch(removeItem({ name: item.name })); // Remove item if quantity is 0
+            dispatch(removeItem({ id: item.id }));
         }
     };
 
     const handleRemove = (item) => {
-        dispatch(removeItem({ name: item.name })); // Dispatch removeItem
+        dispatch(removeItem({ id: item.id }));
     };
 
-    const handleCheckoutShopping = (e) => {
+    const handleCheckoutShopping = () => {
         alert('Functionality to be added for future reference');
     };
 
@@ -43,7 +47,7 @@ const CartItem = ({ onContinueShopping }) => {
             <h1>Shopping Cart</h1>
             <div className="cart-items">
                 {cartItems.map(item => (
-                    <div key={item.name} className="cart-item">
+                    <div key={item.id} className="cart-item">
                         <img src={item.image} alt={item.name} />
                         <div>{item.name}</div>
                         <div>${item.cost}</div>
@@ -56,6 +60,7 @@ const CartItem = ({ onContinueShopping }) => {
                 ))}
             </div>
             <h2>Total Amount: ${calculateTotalAmount()}</h2>
+            <h3>Total Quantity: {totalQuantity}</h3>
             <button onClick={onContinueShopping}>Continue Shopping</button>
             <button onClick={handleCheckoutShopping}>Checkout</button>
         </div>
