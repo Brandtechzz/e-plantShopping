@@ -1,22 +1,44 @@
 import React, { useState } from 'react';
 import './ProductList.css';
 import CartItem from './CartItem';
-import { useDispatch } from 'react-redux'; // Import useDispatch hook
-import { addItemToCart } from './CartSlice'; // Import the addItemToCart action
+import { useDispatch } from 'react-redux'; 
+import { addItemToCart } from './CartSlice'; 
 
 function ProductList() {
     const [showCart, setShowCart] = useState(false);
-    const [addedToCart, setAddedToCart] = useState({}); // State to track added products
+    const [addedToCart, setAddedToCart] = useState({}); 
 
-    const dispatch = useDispatch(); // Get the dispatch function
+    const dispatch = useDispatch(); 
 
     const plantsArray = [
-        // ... (your existing plantsArray)
+        {
+            category: "Air Purifying Plants",
+            plants: [
+                {
+                    name: "Snake Plant",
+                    image: "https://cdn.pixabay.com/photo/2021/01/22/06/04/snake-plant-5939187_1280.jpg",
+                    description: "Produces oxygen at night, improving air quality.",
+                    cost: "$15"
+                },
+                {
+                    name: "Spider Plant",
+                    image: "https://cdn.pixabay.com/photo/2018/07/11/06/47/chlorophytum-3530413_1280.jpg",
+                    description: "Filters formaldehyde and xylene from the air.",
+                    cost: "$12"
+                },
+                {
+                    name: "Peace Lily",
+                    image: "https://cdn1.1800flowers.com/wcsstore/Flowers/images/catalog/158014xlx.jpg?width=545&height=597&auto=webp",
+                    description: "Removes mold spores and purifies air",
+                    cost: "$18"
+                },
+            ]
+        },
     ];
 
     const styleObj = {
         backgroundColor: '#4CAF50',
-        color: '#fff!important',
+        color: '#fff', 
         padding: '15px',
         display: 'flex',
         justifyContent: 'space-between',
@@ -30,9 +52,7 @@ function ProductList() {
     };
 
     const handleAddToCart = (plant) => {
-        dispatch(addItemToCart(plant)); // Dispatch action to add item to cart
-
-        // Update the addedToCart state
+        dispatch(addItemToCart(plant)); 
         setAddedToCart(prevState => ({
             ...prevState,
             [plant.name]: true
@@ -47,13 +67,13 @@ function ProductList() {
     return (
         <div>
             <div className="navbar" style={styleObj}>
-                {/* ... (your existing navbar code) */}
+                {/* Your navbar content can go here */}
             </div>
             {!showCart ? (
                 <div className="product-grid">
                     {plantsArray.map((category, index) => (
                         <div key={index}>
-                            <h1><div>{category.category}</div></h1>
+                            <h1>{category.category}</h1>
                             <div className="product-list">
                                 {category.plants.map((plant, plantIndex) => (
                                     <div className="product-card" key={plantIndex}>
