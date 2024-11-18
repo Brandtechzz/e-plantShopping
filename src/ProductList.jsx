@@ -1,9 +1,16 @@
-import React, { useState,useEffect } from 'react';
-import './ProductList.css'
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { addItem } from './CartSlice'; // Ensure this path is correct
+import './ProductList.css';
 import CartItem from './CartItem';
+
 function ProductList() {
     const [showCart, setShowCart] = useState(false); 
     const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
+    const [addedToCart, setAddedToCart] = useState({});
+
+    const dispatch = useDispatch();
+    const cartItems = useSelector(state => state.cart.items);
 
     const plantsArray = [
         {
@@ -218,7 +225,7 @@ function ProductList() {
     padding: '15px',
     display: 'flex',
     justifyContent: 'space-between',
-    alignIems: 'center',
+    alignItems: 'center',
     fontSize: '20px',
    }
    const styleObjUl={
@@ -246,6 +253,21 @@ const handlePlantsClick = (e) => {
     e.preventDefault();
     setShowCart(false);
   };
+
+  const handleAddToCart = (plant) => {
+    dispatch(addItem({
+        name: plant.name,
+        image: plant.image,
+        cost: plant.cost,
+    }));
+    setAddedToCart((prevState) => ({
+        ...prevState,
+        [plant.name]: true,
+    }));
+};
+
+const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0); // Track total quantity in the cart
+
     return (
         <div>
              <div className="navbar" style={styleObj}>
@@ -267,9 +289,24 @@ const handlePlantsClick = (e) => {
             </div>
         </div>
         {!showCart? (
-        <div className="product-grid">
-
-
+            <div className="product-grid">
+                {plantsArray.map((category, index) => (
+                    <div key={index}>
+                        <h1><div>{category.category}</div></h1>
+                        <div className="product-list">
+                            {category.plants.map((plant, plantIndex) => (
+                                <div className="product-card" key={plantIndex}>
+                                    <img className="product-image" src={plant.image} alt={plant.name} />
+                                    <div className="product-title">{plant.name}</div>
+                                    <div className="product-description">{plant.description}</div>
+                                    <div className="product-cost">{plant.cost}</div>
+                {/*Similarly like the above plant.name show other details like description and cost*/}
+                <button  className="product-button" onClick={() => handleAddToCart(plant)}>Add to Cart</button>
+            </div>
+            ))}
+        </div>
+    </div>
+    ))}
         </div>
  ) :  (
     <CartItem onContinueShopping={handleContinueShopping}/>
